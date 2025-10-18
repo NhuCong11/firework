@@ -97,22 +97,22 @@ const store = {
     },
 
     state: {
-        // will be unpaused in init()
+        // sẽ được bỏ tạm dừng trong init()
         paused: true,
         soundEnabled: false,
         menuOpen: false,
         openHelpTopic: null,
         fullscreen: isFullscreen(),
-        // Note that config values used for <select>s must be strings, unless manually converting values to strings
-        // at render time, and parsing on change.
+        // Lưu ý rằng các giá trị cấu hình được sử dụng cho <select> phải là chuỗi, trừ khi chuyển đổi thủ công các giá trị thành chuỗi
+        // tại thời điểm render, và phân tích khi thay đổi.
         config: {
-            quality: String(IS_HIGH_END_DEVICE ? QUALITY_HIGH : QUALITY_NORMAL), // will be mirrored to a global variable named `quality` in `configDidUpdate`, for perf.
-            shell: "Random",
+            quality: String(IS_HIGH_END_DEVICE ? QUALITY_HIGH : QUALITY_NORMAL), // sẽ được phản chiếu đến biến toàn cục tên `quality` trong `configDidUpdate`, để tối ưu hiệu suất.
+            shell: "Ngẫu nhiên",
             size: IS_DESKTOP
-                ? "3" // Desktop default
+                ? "3" // Mặc định Desktop
                 : IS_HEADER
-                ? "1.2" // Profile header default (doesn't need to be an int)
-                : "2", // Mobile default
+                ? "1.2" // Mặc định Profile header (không cần là int)
+                : "2", // Mặc định Mobile
             autoLaunch: true,
             finale: false,
             skyLighting: SKY_LIGHT_NORMAL + "",
@@ -134,8 +134,8 @@ const store = {
         return () => this._listeners.remove(listener);
     },
 
-    // Load / persist select state to localStorage
-    // Mutates state because `store.load()` should only be called once immediately after store is created, before any subscriptions.
+    // Tải / lưu trữ trạng thái select vào localStorage
+    // Thay đổi state vì `store.load()` chỉ nên được gọi một lần ngay sau khi store được tạo, trước bất kỳ subscription nào.
     load() {
         const serializedData = localStorage.getItem("cm_fireworks_data");
         if (serializedData) {
@@ -157,21 +157,21 @@ const store = {
                 default:
                     throw new Error("version switch should be exhaustive");
             }
-            console.log(`Loaded config (schema version ${schemaVersion})`);
+            console.log(`Đã tải cấu hình (phiên bản schema ${schemaVersion})`);
         }
-        // Deprecated data format. Checked with care (it's not namespaced).
+        // Định dạng dữ liệu đã lỗi thời. Được kiểm tra cẩn thận (không có namespace).
         else if (localStorage.getItem("schemaVersion") === "1") {
             let size;
-            // Attempt to parse data, ignoring if there is an error.
+            // Thử phân tích dữ liệu, bỏ qua nếu có lỗi.
             try {
                 const sizeRaw = localStorage.getItem("configSize");
                 size = typeof sizeRaw === "string" && JSON.parse(sizeRaw);
             } catch (e) {
-                console.log("Recovered from error parsing saved config:");
+                console.log("Đã khôi phục từ lỗi phân tích cấu hình đã lưu:");
                 console.error(e);
                 return;
             }
-            // Only restore validated values
+            // Chỉ khôi phục các giá trị đã được xác thực
             const sizeInt = parseInt(size, 10);
             if (sizeInt >= 0 && sizeInt <= 4) {
                 this.state.config.size = String(sizeInt);
@@ -200,7 +200,7 @@ if (!IS_HEADER) {
     store.load();
 }
 
-// Actions
+// Hành động
 // ---------
 
 function togglePause(toggle) {
@@ -279,44 +279,44 @@ const scaleFactorSelector = () => store.state.config.scaleFactor;
 // Help Content
 const helpContent = {
     shellType: {
-        header: "Shell Type",
-        body: 'The type of firework that will be launched. Select "Random" for a nice assortment!',
+        header: "Loại pháo hoa",
+        body: 'Loại pháo hoa sẽ được bắn. Chọn "Ngẫu nhiên" để có sự đa dạng đẹp mắt!',
     },
     shellSize: {
-        header: "Shell Size",
-        body: "The size of the fireworks. Modeled after real firework shell sizes, larger shells have bigger bursts with more stars, and sometimes more complex effects. However, larger shells also require more processing power and may cause lag.",
+        header: "Kích thước pháo hoa",
+        body: "Kích thước của pháo hoa. Mô phỏng theo kích thước pháo hoa thật, pháo hoa lớn hơn có vụ nổ lớn hơn với nhiều ngôi sao hơn, và đôi khi có hiệu ứng phức tạp hơn. Tuy nhiên, pháo hoa lớn hơn cũng cần nhiều sức mạnh xử lý hơn và có thể gây lag.",
     },
     quality: {
-        header: "Quality",
-        body: "Overall graphics quality. If the animation is not running smoothly, try lowering the quality. High quality greatly increases the amount of sparks rendered and may cause lag.",
+        header: "Chất lượng",
+        body: "Chất lượng đồ họa tổng thể. Nếu hoạt ảnh không chạy mượt mà, hãy thử giảm chất lượng. Chất lượng cao làm tăng đáng kể số lượng tia lửa được hiển thị và có thể gây lag.",
     },
     skyLighting: {
-        header: "Sky Lighting",
-        body: 'Illuminates the background as fireworks explode. If the background looks too bright on your screen, try setting it to "Dim" or "None".',
+        header: "Ánh sáng bầu trời",
+        body: 'Chiếu sáng nền khi pháo hoa nổ. Nếu nền trông quá sáng trên màn hình của bạn, hãy thử đặt thành "Mờ" hoặc "Không".',
     },
     scaleFactor: {
-        header: "Scale",
-        body: "Allows scaling the size of all fireworks, essentially moving you closer or farther away. For larger shell sizes, it can be convenient to decrease the scale a bit, especially on phones or tablets.",
+        header: "Tỷ lệ",
+        body: "Cho phép thay đổi kích thước của tất cả pháo hoa, về cơ bản là di chuyển bạn đến gần hơn hoặc xa hơn. Đối với kích thước pháo hoa lớn hơn, có thể thuận tiện để giảm tỷ lệ một chút, đặc biệt trên điện thoại hoặc máy tính bảng.",
     },
     autoLaunch: {
-        header: "Auto Fire",
-        body: "Launches sequences of fireworks automatically. Sit back and enjoy the show, or disable to have full control.",
+        header: "Tự động bắn",
+        body: "Tự động bắn các chuỗi pháo hoa. Ngồi lại và thưởng thức màn trình diễn, hoặc tắt để có toàn quyền kiểm soát.",
     },
     finaleMode: {
-        header: "Finale Mode",
-        body: 'Launches intense bursts of fireworks. May cause lag. Requires "Auto Fire" to be enabled.',
+        header: "Chế độ kết thúc",
+        body: 'Bắn các vụ nổ pháo hoa dữ dội. Có thể gây lag. Yêu cầu "Tự động bắn" được bật.',
     },
     hideControls: {
-        header: "Hide Controls",
-        body: "Hides the translucent controls along the top of the screen. Useful for screenshots, or just a more seamless experience. While hidden, you can still tap the top-right corner to re-open this menu.",
+        header: "Ẩn điều khiển",
+        body: "Ẩn các điều khiển trong suốt dọc theo đầu màn hình. Hữu ích cho việc chụp ảnh màn hình, hoặc chỉ để có trải nghiệm liền mạch hơn. Khi ẩn, bạn vẫn có thể nhấn vào góc trên bên phải để mở lại menu này.",
     },
     fullscreen: {
-        header: "Fullscreen",
-        body: "Toggles fullscreen mode.",
+        header: "Toàn màn hình",
+        body: "Chuyển đổi chế độ toàn màn hình.",
     },
     longExposure: {
-        header: "Open Shutter",
-        body: "Experimental effect that preserves long streaks of light, similar to leaving a camera shutter open.",
+        header: "Mở cửa trập",
+        body: "Hiệu ứng thử nghiệm giữ lại các vệt sáng dài, tương tự như để cửa trập máy ảnh mở.",
     },
 };
 
@@ -751,7 +751,7 @@ const horsetailShell = (size = 1) => {
 
 function randomShellName() {
     return Math.random() < 0.5
-        ? "Crysanthemum"
+        ? "Cúc họa mi"
         : shellNames[(Math.random() * (shellNames.length - 1) + 1) | 0];
 }
 
@@ -768,9 +768,9 @@ function shellFromConfig(size) {
 // Get a random shell, not including processing intensive varients
 // Note this is only random when "Random" shell is selected in config.
 // Also, this does not create the shell, only returns the factory function.
-const fastShellBlacklist = ["Falling Leaves", "Floral", "Willow"];
+const fastShellBlacklist = ["Lá rơi", "Hoa", "Liễu"];
 function randomFastShell() {
-    const isRandom = shellNameSelector() === "Random";
+    const isRandom = shellNameSelector() === "Ngẫu nhiên";
     let shellName = isRandom ? randomShellName() : shellNameSelector();
     if (isRandom) {
         while (fastShellBlacklist.includes(shellName)) {
@@ -781,28 +781,28 @@ function randomFastShell() {
 }
 
 const shellTypes = {
-    Random: randomShell,
-    Crackle: crackleShell,
-    Crossette: crossetteShell,
-    Crysanthemum: crysanthemumShell,
-    "Falling Leaves": fallingLeavesShell,
-    Floral: floralShell,
-    Ghost: ghostShell,
-    "Horse Tail": horsetailShell,
-    Palm: palmShell,
-    Ring: ringShell,
-    Strobe: strobeShell,
-    Willow: willowShell,
+    "Ngẫu nhiên": randomShell,
+    "Nổ lách tách": crackleShell,
+    "Chữ thập": crossetteShell,
+    "Cúc họa mi": crysanthemumShell,
+    "Lá rơi": fallingLeavesShell,
+    Hoa: floralShell,
+    Ma: ghostShell,
+    "Đuôi ngựa": horsetailShell,
+    Cọ: palmShell,
+    "Vòng tròn": ringShell,
+    "Nhấp nháy": strobeShell,
+    Liễu: willowShell,
 };
 
 const shellNames = Object.keys(shellTypes);
 
 function init() {
-    // Remove loading state
+    // Xóa trạng thái tải
     document.querySelector(".loading-init").remove();
     appNodes.stageContainer.classList.remove("remove");
 
-    // Populate dropdowns
+    // Điền các dropdown
     function setOptionsForSelect(node, options) {
         node.innerHTML = options.reduce(
             (acc, opt) =>
@@ -811,13 +811,13 @@ function init() {
         );
     }
 
-    // shell type
+    // loại pháo hoa
     let options = "";
     shellNames.forEach(
         (opt) => (options += `<option value="${opt}">${opt}</option>`)
     );
     appNodes.shellType.innerHTML = options;
-    // shell size
+    // kích thước pháo hoa
     options = "";
     ['3"', '4"', '6"', '8"', '12"', '16"'].forEach(
         (opt, i) => (options += `<option value="${i}">${opt}</option>`)
@@ -825,18 +825,18 @@ function init() {
     appNodes.shellSize.innerHTML = options;
 
     setOptionsForSelect(appNodes.quality, [
-        { label: "Low", value: QUALITY_LOW },
-        { label: "Normal", value: QUALITY_NORMAL },
-        { label: "High", value: QUALITY_HIGH },
+        { label: "Thấp", value: QUALITY_LOW },
+        { label: "Bình thường", value: QUALITY_NORMAL },
+        { label: "Cao", value: QUALITY_HIGH },
     ]);
 
     setOptionsForSelect(appNodes.skyLighting, [
-        { label: "None", value: SKY_LIGHT_NONE },
-        { label: "Dim", value: SKY_LIGHT_DIM },
-        { label: "Normal", value: SKY_LIGHT_NORMAL },
+        { label: "Không", value: SKY_LIGHT_NONE },
+        { label: "Mờ", value: SKY_LIGHT_DIM },
+        { label: "Bình thường", value: SKY_LIGHT_NORMAL },
     ]);
 
-    // 0.9 is mobile default
+    // 0.9 là mặc định cho mobile
     setOptionsForSelect(
         appNodes.scaleFactor,
         [0.5, 0.62, 0.75, 0.9, 1.0, 1.5, 2.0].map((value) => ({
@@ -845,13 +845,13 @@ function init() {
         }))
     );
 
-    // Begin simulation
+    // Bắt đầu mô phỏng
     togglePause(false);
 
-    // initial render
+    // render ban đầu
     renderApp(store.state);
 
-    // Apply initial config
+    // Áp dụng cấu hình ban đầu
     configDidUpdate();
 }
 
@@ -983,7 +983,7 @@ function seqPyramid() {
     const randomSpecialShell = randomShell;
 
     function launchShell(x, useSpecial) {
-        const isRandom = shellNameSelector() === "Random";
+        const isRandom = shellNameSelector() === "Ngẫu nhiên";
         let shellType = isRandom
             ? useSpecial
                 ? randomSpecialShell
@@ -1030,7 +1030,7 @@ function seqSmallBarrage() {
 
     // (cos(x*5π+0.5π)+1)/2 is a custom wave bounded by 0 and 1 used to set varying launch heights
     function launchShell(x, useSpecial) {
-        const isRandom = shellNameSelector() === "Random";
+        const isRandom = shellNameSelector() === "Ngẫu nhiên";
         let shellType = isRandom
             ? useSpecial
                 ? randomSpecialShell
@@ -2323,7 +2323,7 @@ const soundManager = {
         bufferSource.start(0);
     },
 };
-// Kick things off.
+// Bắt đầu mọi thứ.
 
 function setLoadingStatus(status) {
     document.querySelector(".loading-init__status").textContent = status;
@@ -2332,12 +2332,12 @@ function setLoadingStatus(status) {
 if (IS_HEADER) {
     init();
 } else {
-    // Allow status to render, then preload assets and start app.
-    setLoadingStatus("Lighting Fuses");
+    // Cho phép trạng thái render, sau đó tải trước tài nguyên và bắt đầu app.
+    setLoadingStatus("Đang châm ngòi");
     setTimeout(() => {
         soundManager.preload().then(init, (reason) => {
             init();
-            // setLoadingStatus('Error Loading Audio');
+            // setLoadingStatus('Lỗi tải âm thanh');
             return Promise.reject(reason);
         });
     }, 0);
